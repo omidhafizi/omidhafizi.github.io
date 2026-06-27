@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>امید حفیظی - برنامه‌نویس PLC زیمنس</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Vazirmatn',sans-serif;background:#fff5f0;color:#1a1a2e;overflow-x:hidden;direction:rtl;}
+
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;
+  background:linear-gradient(135deg,#ff6b6b 0%,#feca57 25%,#48dbfb 50%,#ff9ff3 75%,#54a0ff 100%);
+  background-size:400% 400%;
+  animation:bgShift 8s ease infinite;
+  opacity:0.12;
+}
+@keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+nav{
+  position:fixed;top:0;width:100%;z-index:200;
+  background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);
+  border-bottom:2px solid transparent;
+  border-image:linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb,#ff9ff3) 1;
+  padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;
+}
+.nav-logo{
+  font-size:20px;font-weight:900;
+  background:linear-gradient(135deg,#ff6b6b,#f368e0,#54a0ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:logoGlow 3s ease infinite alternate;
+}
+@keyframes logoGlow{from{filter:drop-shadow(0 0 4px #ff6b6b44)}to{filter:drop-shadow(0 0 12px #54a0ff88)}}
+.nav-links{display:flex;gap:1.5rem;list-style:none;}
+.nav-links a{
+  color:#555;text-decoration:none;font-size:14px;font-weight:500;
+  padding:6px 14px;border-radius:20px;transition:all 0.3s;
+}
+.nav-links a:hover{background:linear-gradient(135deg,#ff6b6b,#feca57);color:#fff;}
+
+.hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:80px 2rem 2rem;position:relative;overflow:hidden;
+}
+.particles{position:absolute;inset:0;pointer-events:none;}
+.p{position:absolute;border-radius:50%;animation:float linear infinite;}
+@keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-100px) rotate(720deg);opacity:0}}
+
+.hero-content{position:relative;z-index:2;}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 20px;border-radius:999px;margin-bottom:1.5rem;
+  background:linear-gradient(135deg,#ff6b6b,#feca57);
+  color:#fff;font-size:14px;font-weight:600;
+  box-shadow:0 4px 20px rgba(255,107,107,0.4);
+  animation:badgePop 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes badgePop{from{transform:scale(0) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+
+.hero h1{
+  font-size:clamp(2.5rem,6vw,4rem);font-weight:900;line-height:1.15;
+  margin-bottom:0.5rem;
+  animation:slideUp 0.8s 0.2s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.hero h1 .name{
+  background:linear-gradient(135deg,#ff6b6b 0%,#f368e0 50%,#54a0ff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-size:200% auto;animation:nameShine 3s linear infinite;
+}
+@keyframes nameShine{to{background-position:200% center}}
+
+.hero-subtitle{
+  font-size:1.25rem;font-weight:700;margin-bottom:0.75rem;
+  background:linear-gradient(135deg,#54a0ff,#48dbfb);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:slideUp 0.8s 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.hero p{
+  font-size:1rem;color:#666;max-width:480px;margin:0 auto 2.5rem;line-height:1.9;
+  animation:slideUp 0.8s 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.hero-btns{
+  display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+  animation:slideUp 0.8s 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.btn-main{
+  padding:14px 32px;border-radius:999px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#ff6b6b,#f368e0,#54a0ff);
+  background-size:200% auto;
+  color:#fff;font-size:16px;font-family:inherit;font-weight:700;
+  box-shadow:0 6px 25px rgba(255,107,107,0.45);
+  transition:all 0.3s;animation:btnPulse 2s ease infinite;
+}
+.btn-main:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 10px 35px rgba(255,107,107,0.6);}
+@keyframes btnPulse{0%,100%{box-shadow:0 6px 25px rgba(255,107,107,0.45)}50%{box-shadow:0 6px 35px rgba(243,104,224,0.6)}}
+.btn-sec{
+  padding:14px 32px;border-radius:999px;cursor:pointer;
+  border:2.5px solid transparent;
+  background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#54a0ff,#48dbfb) border-box;
+  color:#54a0ff;font-size:16px;font-family:inherit;font-weight:700;
+  transition:all 0.3s;
+}
+.btn-sec:hover{background:linear-gradient(135deg,#54a0ff,#48dbfb);color:#fff;transform:translateY(-3px);}
+
+.scroll-arrow{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  width:36px;height:36px;border:2.5px solid #ff6b6b;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  animation:bounce 2s ease infinite;cursor:pointer;color:#ff6b6b;font-size:16px;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+.sec{padding:5rem 2rem;max-width:960px;margin:0 auto;}
+.sec-head{text-align:center;margin-bottom:3rem;}
+.sec-tag{display:inline-block;padding:5px 18px;border-radius:999px;font-size:13px;font-weight:600;margin-bottom:0.75rem;}
+.sec-title{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;line-height:1.2;}
+.sec-title span{background:linear-gradient(135deg,#ff6b6b,#f368e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+.about-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.about-me{
+  background:#fff;border-radius:24px;padding:2rem;
+  border:2px solid #ffe0e0;
+  box-shadow:0 8px 32px rgba(255,107,107,0.1);
+  transition:transform 0.3s,box-shadow 0.3s;
+}
+.about-me:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(255,107,107,0.18);}
+.about-me h3{font-size:1.1rem;font-weight:700;margin-bottom:1rem;color:#ff6b6b;}
+.about-me p{color:#666;font-size:0.9rem;line-height:1.9;}
+.info-card{
+  background:linear-gradient(135deg,#fff9c4,#fff3e0);
+  border-radius:24px;padding:2rem;
+  border:2px solid #feca57;
+  box-shadow:0 8px 32px rgba(254,202,87,0.2);
+}
+.info-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed #ffe08a;}
+.info-row:last-child{border-bottom:none;}
+.info-icon{font-size:20px;width:36px;text-align:center;}
+.info-label{font-size:12px;color:#999;}
+.info-val{font-size:14px;font-weight:600;color:#333;}
+
+.skills-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;}
+.sk{background:#fff;border-radius:20px;padding:1.5rem;border:2px solid transparent;transition:all 0.3s;position:relative;overflow:hidden;}
+.sk:hover{transform:translateY(-6px);}
+.sk-1{border-color:#ffcccc;box-shadow:0 4px 20px rgba(255,107,107,0.1);}
+.sk-1:hover{box-shadow:0 12px 40px rgba(255,107,107,0.25);}
+.sk-2{border-color:#cce5ff;box-shadow:0 4px 20px rgba(84,160,255,0.1);}
+.sk-2:hover{box-shadow:0 12px 40px rgba(84,160,255,0.25);}
+.sk-3{border-color:#ffd6f5;box-shadow:0 4px 20px rgba(243,104,224,0.1);}
+.sk-3:hover{box-shadow:0 12px 40px rgba(243,104,224,0.25);}
+.sk-4{border-color:#ccfff5;box-shadow:0 4px 20px rgba(72,219,251,0.1);}
+.sk-4:hover{box-shadow:0 12px 40px rgba(72,219,251,0.25);}
+.sk-5{border-color:#fff3cc;box-shadow:0 4px 20px rgba(254,202,87,0.1);}
+.sk-5:hover{box-shadow:0 12px 40px rgba(254,202,87,0.25);}
+.sk-6{border-color:#d5ccff;box-shadow:0 4px 20px rgba(108,92,231,0.1);}
+.sk-6:hover{box-shadow:0 12px 40px rgba(108,92,231,0.25);}
+
+.sk-top{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
+.sk-emoji{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.sk-name{font-size:15px;font-weight:700;color:#1a1a2e;}
+.sk-desc{font-size:13px;color:#888;line-height:1.7;margin-bottom:1rem;}
+.sk-bar-wrap{background:#f0f0f0;border-radius:999px;height:6px;overflow:hidden;}
+.sk-bar{height:100%;border-radius:999px;position:relative;overflow:hidden;}
+.sk-bar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.5) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.5s infinite;}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+.sk-pct{font-size:12px;font-weight:700;margin-top:6px;text-align:left;}
+
+.contact-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;}
+.ct{background:#fff;border-radius:20px;padding:1.75rem;text-align:center;border:2px solid transparent;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);cursor:pointer;}
+.ct:hover{transform:translateY(-8px) scale(1.03);}
+.ct-1{border-color:#ffcccc;} .ct-1:hover{box-shadow:0 16px 40px rgba(255,107,107,0.3);}
+.ct-2{border-color:#cce5ff;} .ct-2:hover{box-shadow:0 16px 40px rgba(84,160,255,0.3);}
+.ct-3{border-color:#ccfff5;} .ct-3:hover{box-shadow:0 16px 40px rgba(72,219,251,0.3);}
+.ct-4{border-color:#ffd6f5;} .ct-4:hover{box-shadow:0 16px 40px rgba(243,104,224,0.3);}
+.ct-icon{width:60px;height:60px;border-radius:18px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.ct-label{font-size:12px;color:#aaa;margin-bottom:4px;}
+.ct-val{font-size:14px;font-weight:700;color:#333;}
+
+footer{
+  text-align:center;padding:2.5rem;
+  background:linear-gradient(135deg,#ff6b6b,#f368e0,#54a0ff,#48dbfb);
+  background-size:300% auto;animation:bgShift 5s ease infinite;
+  color:#fff;font-weight:600;
+}
+
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.7s cubic-bezier(0.34,1.56,0.64,1);}
+.reveal.show{opacity:1;transform:translateY(0);}
+
+@media(max-width:600px){
+  .about-wrap{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">امید حفیظی ⚡</div>
+  <ul class="nav-links">
+    <li><a href="#about">درباره من</a></li>
+    <li><a href="#skills">مهارت‌ها</a></li>
+    <li><a href="#contact">تماس</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="home">
+  <div class="particles" id="pts"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🎓 دانشگاه صنعتی اصفهان</div>
+    <h1>سلام، من <span class="name">امید حفیظی</span> هستم</h1>
+    <div class="hero-subtitle">⚙️ متخصص PLC زیمنس</div>
+    <p>طراحی و پیاده‌سازی سیستم‌های کنترل صنعتی — اتوماسیون هوشمند با بهترین فناوری‌های روز</p>
+    <div class="hero-btns">
+      <button class="btn-main" onclick="document.getElementById('skills').scrollIntoView({behavior:'smooth'})">مهارت‌های من 🚀</button>
+      <button class="btn-sec" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">تماس بگیرید 📩</button>
+    </div>
+  </div>
+  <div class="scroll-arrow" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">↓</div>
+</section>
+
+<div class="sec" id="about">
+  <div class="sec-head reveal">
+    <div class="sec-tag" style="background:#fff0f0;color:#ff6b6b;">👤 معرفی</div>
+    <h2 class="sec-title">درباره <span>من</span></h2>
+  </div>
+  <div class="about-wrap reveal">
+    <div class="about-me">
+      <h3>🙋 چه کسی هستم؟</h3>
+      <p>دانشجوی دانشگاه صنعتی اصفهان با عشق به اتوماسیون و کنترل صنعتی. تخصصم برنامه‌نویسی PLC زیمنس و طراحی سیستم‌های هوشمند صنعتیه.</p>
+      <p style="margin-top:1rem;">با TIA Portal راه‌حل‌های دقیق و بهینه طراحی می‌کنم که فرآیندهای صنعتی رو متحول می‌کنن.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:1.25rem;">
+        <span style="padding:4px 12px;border-radius:999px;background:#fff0f0;color:#ff6b6b;font-size:12px;font-weight:600;">PLC زیمنس</span>
+        <span style="padding:4px 12px;border-radius:999px;background:#e8f4ff;color:#54a0ff;font-size:12px;font-weight:600;">TIA Portal</span>
+        <span style="padding:4px 12px;border-radius:999px;background:#f0fff8;color:#00d2d3;font-size:12px;font-weight:600;">اتوماسیون</span>
+        <span style="padding:4px 12px;border-radius:999px;background:#fff5f0;color:#f368e0;font-size:12px;font-weight:600;">SCADA</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-row">
+        <span class="info-icon">🎓</span>
+        <div><div class="info-label">دانشگاه</div><div class="info-val">دانشگاه صنعتی اصفهان</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">⚙️</span>
+        <div><div class="info-label">تخصص</div><div class="info-val">برنامه‌نویسی PLC زیمنس</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">📍</span>
+        <div><div class="info-label">مکان</div><div class="info-val">اصفهان، ایران</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">💡</span>
+        <div><div class="info-label">علاقه</div><div class="info-val">اتوماسیون صنعتی</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">🌟</span>
+        <div><div class="info-label">وضعیت</div><div class="info-val" style="color:#00b894;">آماده همکاری</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="skills">
+  <div class="sec-head reveal">
+    <div class="sec-tag" style="background:#f0f5ff;color:#54a0ff;">⚡ تخصص</div>
+    <h2 class="sec-title">مهارت‌<span>های</span> من</h2>
+  </div>
+  <div class="skills-wrap">
+    <div class="sk sk-1 reveal">
+      <div class="sk-top"><div class="sk-emoji" style="background:#fff0f0;">⚙️</div><span class="sk-name">PLC زیمنس S7</span></div>
+      <div class="sk-desc">برنامه‌نویسی انواع S7-300, S7-400, S7-1200, S7-1500 با مهارت کامل</div>
+      <div class="sk-bar-wrap"><div class="sk-bar" style="width:90%;background:linear-gradient(90deg,#ff6b6b,#ff9f43);"></div></div>
+      <div class="sk-pct" style="color:#ff6b6b;">۹۰٪</div>
+    </div>
+    <div class="sk sk-2 reveal">
+      <div class="sk-top"><div class="sk-emoji" style="background:#e8f4ff;">🖥️</div><span class="sk-name">TIA Portal</span></div>
+      <div class="sk-desc">طراحی و پیکربندی کامل پروژه در محیط TIA Portal زیمنس</div>
+      <div class="sk-bar-wrap"><div class="sk-bar" style="width:85%;background:linear-gradient(90deg,#54a0ff,#48dbfb);"></div></div>
+      <div class="sk-pct" style="color:#54a0ff;">۸۵٪</div>
+    </div>
+    <div class="sk sk-3 reveal">
+      <div class="sk-top"><div class="sk-emoji" style="background:#ffd6f5;">📊</div><span class="sk-name">SCADA / HMI</span></div>
+      <div class="sk-desc">طراحی رابط‌های کاربری برای نظارت و کنترل فرآیند صنعتی</div>
+      <div class="sk-bar-wrap"><div class="sk-bar" style="width:78%;background:linear-gradient(90deg,#f368e0,#a29bfe);"></div></div>
+      <div class="sk-pct" style="color:#f368e0;">۷۸٪</div>
+    </div>
+    <div class="sk sk-4 reveal">
+      <div class="sk-top"><div class="sk-emoji" style="background:#ccfff5;">🔌</div><span class="sk-name">Ladder / FBD / STL</span></div>
+      <div class="sk-desc">تسلط کامل به زبان‌های برنامه‌نویسی استاندارد IEC 61131-3</div>
+      <div class="sk-bar-wrap"><div class="sk-bar" style="width:88%;background:linear-gradient(90deg,#00d2d3,#55efc4);"></div></div>
+      <div class="sk-pct" style="color:#00d2d3;">۸۸٪</div>
+    </div>
+    <div class="sk sk-5 reveal">
+      <div class="sk-top"><div class="sk-emoji" style="background:#fff3cc;">🏭</div><span class="sk-name">اتوماسیون صنعتی</span></div>
+      <div class="sk-desc">طراحی سیستم‌های اتوماسیون خطوط تولید و فرآیندهای پیچیده</div>
+      <div class="sk-bar-wrap"><div class="sk-bar" style="width:82%;background:linear-gradient(90deg,#feca57,#f9ca24);"></div></div>
+      <div class="sk-pct" style="color:#f9ca24;">۸۲٪</div>
+    </div>
+    <div class="sk sk-6 reveal">
+      <div class="sk-top"><div class="sk-emoji" style="background:#d5ccff;">📡</div><span class="sk-name">شبکه‌های صنعتی</span></div>
+      <div class="sk-desc">پیکربندی Profibus, Profinet و ارتباطات پیشرفته بین PLCها</div>
+      <div class="sk-bar-wrap"><div class="sk-bar" style="width:72%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);"></div></div>
+      <div class="sk-pct" style="color:#6c5ce7;">۷۲٪</div>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="contact">
+  <div class="sec-head reveal">
+    <div class="sec-tag" style="background:#f0fff8;color:#00b894;">📬 ارتباط</div>
+    <h2 class="sec-title">تماس با <span>من</span></h2>
+  </div>
+  <div class="contact-wrap reveal">
+    <div class="ct ct-1">
+      <div class="ct-icon" style="background:#fff0f0;">📧</div>
+      <div class="ct-label">ایمیل</div>
+      <div class="ct-val">omid.hafizi@email.com</div>
+    </div>
+    <div class="ct ct-2">
+      <div class="ct-icon" style="background:#e8f4ff;">💼</div>
+      <div class="ct-label">لینکدین</div>
+      <div class="ct-val">omid-hafizi</div>
+    </div>
+    <div class="ct ct-3">
+      <div class="ct-icon" style="background:#ccfff5;">✈️</div>
+      <div class="ct-label">تلگرام</div>
+      <div class="ct-val">@omid_hafizi</div>
+    </div>
+    <div class="ct ct-4">
+      <div class="ct-icon" style="background:#ffd6f5;">📍</div>
+      <div class="ct-label">مکان</div>
+      <div class="ct-val">اصفهان، ایران</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>ساخته شده با ❤️ و انرژی توسط امید حفیظی | دانشگاه صنعتی اصفهان 🎓</p>
+</footer>
+
+<script>
+const pts = document.getElementById('pts');
+const colors = ['#ff6b6b','#feca57','#48dbfb','#ff9ff3','#54a0ff','#55efc4','#a29bfe'];
+for(let i=0;i<30;i++){
+  const d = document.createElement('div');
+  const s = Math.random()*12+4;
+  d.className='p';
+  d.style.cssText=`width:${s}px;height:${s}px;background:${colors[Math.floor(Math.random()*colors.length)]};left:${Math.random()*100}%;animation-duration:${Math.random()*10+8}s;animation-delay:${Math.random()*8}s;opacity:0.7;`;
+  pts.appendChild(d);
+}
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('show'),i*100);obs.unobserve(e.target);}
+  });
+},{threshold:0.1});
+reveals.forEach(r=>obs.observe(r));
+</script>
+</body>
+</html>
