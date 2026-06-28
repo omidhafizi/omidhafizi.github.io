@@ -188,8 +188,24 @@ footer{
 .reveal{opacity:0;transform:translateY(30px);transition:all 0.7s cubic-bezier(0.34,1.56,0.64,1);}
 .reveal.show{opacity:1;transform:translateY(0);}
 
-@media(max-width:600px){
+@media(max-width:768px){
   .about-wrap{grid-template-columns:1fr;}
+  .nav-links{gap:0.6rem;}
+  .nav-links a{font-size:12px;padding:4px 8px;}
+  .nav-logo{font-size:16px;}
+  nav{padding:0 1rem;}
+  .hero h1{font-size:clamp(1.8rem,8vw,2.5rem);}
+  .hero-subtitle{font-size:1rem;}
+  .hero p{font-size:0.9rem;}
+  .btn-main,.btn-sec{padding:11px 22px;font-size:14px;}
+  .sec{padding:3rem 1rem;}
+  .sec-title{font-size:1.4rem;}
+  .skills-wrap{grid-template-columns:1fr;}
+  .contact-wrap{grid-template-columns:1fr 1fr;}
+  .ct{padding:1.25rem;}
+  .ct-val{font-size:12px;word-break:break-all;}
+  .sk{padding:1.25rem;}
+  .info-val{font-size:13px;}
 }
 </style>
 </head>
@@ -312,21 +328,21 @@ footer{
     <h2 class="sec-title">تماس با <span>من</span></h2>
   </div>
   <div class="contact-wrap reveal">
-    <div class="ct ct-1">
+    <a href="mailto:omidhafizi.86@gmail.com" style="text-decoration:none;" class="ct ct-1">
       <div class="ct-icon" style="background:#fff0f0;">📧</div>
       <div class="ct-label">ایمیل</div>
       <div class="ct-val">omidhafizi.86@gmail.com</div>
-    </div>
-    <div class="ct ct-2">
+    </a>
+    <a href="https://linkedin.com/in/omid-hafizi" target="_blank" style="text-decoration:none;" class="ct ct-2">
       <div class="ct-icon" style="background:#e8f4ff;">💼</div>
       <div class="ct-label">لینکدین</div>
       <div class="ct-val">omid-hafizi</div>
-    </div>
-    <div class="ct ct-3">
+    </a>
+    <a href="https://t.me/omid_hfz" target="_blank" style="text-decoration:none;" class="ct ct-3">
       <div class="ct-icon" style="background:#ccfff5;">✈️</div>
       <div class="ct-label">تلگرام</div>
       <div class="ct-val">@omid_hfz</div>
-    </div>
+    </a>
     <div class="ct ct-4">
       <div class="ct-icon" style="background:#ffd6f5;">📍</div>
       <div class="ct-label">مکان</div>
