@@ -3,330 +3,530 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>امید حفیظی | Omid Hafizi</title>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<title>کارگاه PLC | یادگیری عملی با بازی شبیه‌سازی</title>
+<meta name="description" content="یاد بگیر PLC چطور کار می‌کند، با یک بازی شبیه‌سازی واقعی که هر مرحله را با یک تابلوی صنعتی زنده نشان می‌دهد.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Vazirmatn',sans-serif;background:#fff5f0;color:#1a1a2e;overflow-x:hidden;direction:rtl;transition:direction 0.3s;}
-body.en{font-family:'Plus Jakarta Sans',sans-serif;direction:ltr;}
-body::before{content:'';position:fixed;inset:0;z-index:-1;background:linear-gradient(135deg,#ff6b6b 0%,#feca57 25%,#48dbfb 50%,#ff9ff3 75%,#54a0ff 100%);background-size:400% 400%;animation:bgShift 8s ease infinite;opacity:0.12;}
-@keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  :root{
+    --bg:#F2F4F2;
+    --surface:#FFFFFF;
+    --surface-2:#EAEDEA;
+    --ink:#151B1A;
+    --ink-soft:#4E5A57;
+    --ink-faint:#8A948F;
+    --rail:#CBD3CD;
+    --amber:#EBA53B;
+    --amber-soft:#FBEAD0;
+    --blue:#2D6E8E;
+    --blue-soft:#DCEAF0;
+    --green:#3C9463;
+    --green-soft:#DFF0E6;
+    --radius:14px;
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Vazirmatn',sans-serif;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'Vazirmatn',sans-serif;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
 
-nav{position:fixed;top:0;width:100%;z-index:200;background:rgba(255,255,255,0.9);backdrop-filter:blur(16px);border-bottom:2px solid transparent;border-image:linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb,#ff9ff3) 1;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:64px;}
-.nav-logo{font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff6b6b,#f368e0,#54a0ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.nav-right{display:flex;align-items:center;gap:1rem;}
-.nav-links{display:flex;gap:0.5rem;list-style:none;}
-.nav-links a{color:#555;text-decoration:none;font-size:13px;font-weight:500;padding:5px 12px;border-radius:20px;transition:all 0.3s;}
-.nav-links a:hover{background:linear-gradient(135deg,#ff6b6b,#feca57);color:#fff;}
-.lang-btn{padding:7px 16px;border-radius:999px;border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#ff6b6b,#54a0ff) border-box;cursor:pointer;font-size:13px;font-weight:700;color:#ff6b6b;transition:all 0.3s;font-family:inherit;}
-.lang-btn:hover{background:linear-gradient(135deg,#ff6b6b,#54a0ff);color:#fff;}
+  /* ===== ریل‌های عمودی (motif اصلی) ===== */
+  .rails{
+    position:fixed;top:0;bottom:0;left:0;right:0;
+    max-width:var(--maxw);margin:0 auto;
+    pointer-events:none;z-index:0;
+  }
+  .rail-line{
+    position:absolute;top:0;bottom:0;width:2px;background:var(--rail);
+    opacity:.55;
+  }
+  .rail-line.l{right:12px;}
+  .rail-line.r{left:12px;}
+  .rail-pulse{
+    position:absolute;width:6px;height:6px;border-radius:50%;
+    background:var(--amber);box-shadow:0 0 10px 2px var(--amber);
+    right:9px;
+    animation:pulse-down 5.5s linear infinite;
+  }
+  @keyframes pulse-down{
+    0%{top:-2%;opacity:0;}
+    5%{opacity:1;}
+    95%{opacity:1;}
+    100%{top:102%;opacity:0;}
+  }
+  @media (max-width:760px){ .rails{display:none;} }
 
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 1.5rem 2rem;position:relative;overflow:hidden;}
-.particles{position:absolute;inset:0;pointer-events:none;}
-.p{position:absolute;border-radius:50%;animation:float linear infinite;}
-@keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-100px) rotate(720deg);opacity:0}}
-.hero-content{position:relative;z-index:2;max-width:620px;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:999px;margin-bottom:1.5rem;background:linear-gradient(135deg,#ff6b6b,#feca57);color:#fff;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(255,107,107,0.4);animation:badgePop 0.8s cubic-bezier(0.34,1.56,0.64,1) both;}
-@keyframes badgePop{from{transform:scale(0) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
-.hero h1{font-size:clamp(2rem,6vw,3.8rem);font-weight:900;line-height:1.15;margin-bottom:0.5rem;animation:slideUp 0.8s 0.2s cubic-bezier(0.34,1.56,0.64,1) both;}
-@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-.name{background:linear-gradient(135deg,#ff6b6b 0%,#f368e0 50%,#54a0ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:nameShine 3s linear infinite;}
-@keyframes nameShine{to{background-position:200% center}}
-.hero-subtitle{font-size:1.1rem;font-weight:700;margin-bottom:0.75rem;background:linear-gradient(135deg,#54a0ff,#48dbfb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:slideUp 0.8s 0.4s cubic-bezier(0.34,1.56,0.64,1) both;}
-.hero p{font-size:0.95rem;color:#666;max-width:500px;margin:0 auto 2.5rem;line-height:1.9;animation:slideUp 0.8s 0.5s cubic-bezier(0.34,1.56,0.64,1) both;}
-.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:slideUp 0.8s 0.6s cubic-bezier(0.34,1.56,0.64,1) both;}
-.btn-main{padding:12px 28px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(135deg,#ff6b6b,#f368e0,#54a0ff);color:#fff;font-size:15px;font-family:inherit;font-weight:700;box-shadow:0 6px 25px rgba(255,107,107,0.45);transition:all 0.3s;animation:btnPulse 2s ease infinite;}
-.btn-main:hover{transform:translateY(-3px) scale(1.05);}
-@keyframes btnPulse{0%,100%{box-shadow:0 6px 25px rgba(255,107,107,0.45)}50%{box-shadow:0 6px 35px rgba(243,104,224,0.6)}}
-.btn-sec{padding:12px 28px;border-radius:999px;cursor:pointer;border:2.5px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#54a0ff,#48dbfb) border-box;color:#54a0ff;font-size:15px;font-family:inherit;font-weight:700;transition:all 0.3s;}
-.btn-sec:hover{background:linear-gradient(135deg,#54a0ff,#48dbfb);color:#fff;transform:translateY(-3px);}
-.scroll-arrow{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);width:36px;height:36px;border:2.5px solid #ff6b6b;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:bounce 2s ease infinite;cursor:pointer;color:#ff6b6b;font-size:16px;}
-@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+  section{position:relative;z-index:1;padding:88px 0;}
+  .rung{
+    max-width:var(--maxw);margin:0 auto;
+    border-top:2px solid var(--rail);
+    position:relative;
+  }
+  .rung::before,.rung::after{
+    content:'';position:absolute;top:-4px;width:10px;height:10px;
+    border-radius:50%;background:var(--bg);border:2px solid var(--rail);
+  }
+  .rung::before{right:6px;}
+  .rung::after{left:6px;}
 
-.sec{padding:4.5rem 1.5rem;max-width:960px;margin:0 auto;}
-.sec-head{text-align:center;margin-bottom:2.5rem;}
-.sec-tag{display:inline-block;padding:5px 18px;border-radius:999px;font-size:13px;font-weight:600;margin-bottom:0.75rem;}
-.sec-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:900;line-height:1.2;}
-.sec-title span{background:linear-gradient(135deg,#ff6b6b,#f368e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .eyebrow{
+    font-family:'Vazirmatn',sans-serif;
+    font-size:13px;letter-spacing:.06em;
+    color:var(--blue);
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{content:'';width:22px;height:1px;background:var(--blue);display:inline-block;}
 
-.about-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
-.about-me{background:#fff;border-radius:24px;padding:2rem;border:2px solid #ffe0e0;box-shadow:0 8px 32px rgba(255,107,107,0.1);transition:transform 0.3s,box-shadow 0.3s;}
-.about-me:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(255,107,107,0.18);}
-.about-me h3{font-size:1.05rem;font-weight:700;margin-bottom:1rem;color:#ff6b6b;}
-.about-me p{color:#666;font-size:0.88rem;line-height:1.9;}
-.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.25rem;}
-.tag{padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;}
-.info-card{background:linear-gradient(135deg,#fff9c4,#fff3e0);border-radius:24px;padding:2rem;border:2px solid #feca57;box-shadow:0 8px 32px rgba(254,202,87,0.2);}
-.info-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed #ffe08a;}
-.info-row:last-child{border-bottom:none;}
-.info-icon{font-size:20px;width:36px;text-align:center;}
-.info-label{font-size:12px;color:#999;}
-.info-val{font-size:14px;font-weight:600;color:#333;}
+  h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.01em;}
+  h2{font-size:clamp(26px,3.4vw,38px);margin-bottom:20px;}
+  p{color:var(--ink-soft);margin:0 0 14px;}
 
-.skills-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem;}
-.sk{background:#fff;border-radius:20px;padding:1.5rem;border:2px solid transparent;transition:all 0.3s;}
-.sk:hover{transform:translateY(-6px);}
-.sk-1{border-color:#ffcccc;box-shadow:0 4px 20px rgba(255,107,107,0.1);}.sk-1:hover{box-shadow:0 12px 40px rgba(255,107,107,0.25);}
-.sk-2{border-color:#cce5ff;box-shadow:0 4px 20px rgba(84,160,255,0.1);}.sk-2:hover{box-shadow:0 12px 40px rgba(84,160,255,0.25);}
-.sk-3{border-color:#ffd6f5;box-shadow:0 4px 20px rgba(243,104,224,0.1);}.sk-3:hover{box-shadow:0 12px 40px rgba(243,104,224,0.25);}
-.sk-4{border-color:#ccfff5;box-shadow:0 4px 20px rgba(72,219,251,0.1);}.sk-4:hover{box-shadow:0 12px 40px rgba(72,219,251,0.25);}
-.sk-5{border-color:#fff3cc;box-shadow:0 4px 20px rgba(254,202,87,0.1);}.sk-5:hover{box-shadow:0 12px 40px rgba(254,202,87,0.25);}
-.sk-6{border-color:#d5ccff;box-shadow:0 4px 20px rgba(108,92,231,0.1);}.sk-6:hover{box-shadow:0 12px 40px rgba(108,92,231,0.25);}
-.sk-top{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
-.sk-emoji{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-.sk-name{font-size:15px;font-weight:700;color:#1a1a2e;}
-.sk-desc{font-size:13px;color:#888;line-height:1.7;margin-bottom:1rem;}
-.sk-bar-wrap{background:#f0f0f0;border-radius:999px;height:6px;overflow:hidden;}
-.sk-bar{height:100%;border-radius:999px;position:relative;overflow:hidden;}
-.sk-bar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);background-size:200% 100%;animation:shimmer 1.5s infinite;}
-@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
-.sk-pct{font-size:12px;font-weight:700;margin-top:6px;text-align:left;}
+  /* ===== دکمه‌ها ===== */
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:14px 26px;border-radius:10px;
+    font-family:'Vazirmatn',sans-serif;font-weight:700;font-size:15px;
+    text-decoration:none;cursor:pointer;border:none;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--amber);color:#241a03;box-shadow:0 6px 18px -6px rgba(235,165,59,.7);}
+  .btn-primary:hover{box-shadow:0 10px 22px -6px rgba(235,165,59,.85);}
+  .btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--rail);}
+  .btn-ghost:hover{border-color:var(--ink-faint);}
 
-.contact-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.25rem;}
-.ct{background:#fff;border-radius:20px;padding:1.5rem;text-align:center;border:2px solid transparent;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);cursor:pointer;display:block;text-decoration:none;color:inherit;}
-.ct:hover{transform:translateY(-8px) scale(1.03);}
-.ct-1{border-color:#ffcccc;}.ct-1:hover{box-shadow:0 16px 40px rgba(255,107,107,0.3);}
-.ct-2{border-color:#ffd6f5;}.ct-2:hover{box-shadow:0 16px 40px rgba(243,104,224,0.3);}
-.ct-3{border-color:#ccfff5;}.ct-3:hover{box-shadow:0 16px 40px rgba(72,219,251,0.3);}
-.ct-4{border-color:#fff3cc;}.ct-4:hover{box-shadow:0 16px 40px rgba(254,202,87,0.3);}
-.ct-icon{width:56px;height:56px;border-radius:16px;margin:0 auto 0.875rem;display:flex;align-items:center;justify-content:center;font-size:24px;}
-.ct-label{font-size:12px;color:#aaa;margin-bottom:4px;}
-.ct-val{font-size:13px;font-weight:700;color:#333;word-break:break-all;}
+  /* ===== HERO ===== */
+  .hero{padding-top:120px;text-align:center;}
+  .hero .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--surface);border:1px solid var(--rail);
+    padding:7px 16px;border-radius:99px;
+    font-family:'Vazirmatn',sans-serif;font-size:12.5px;color:var(--ink-soft);
+    margin-bottom:28px;
+  }
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-soft);}
+  .hero h1{font-size:clamp(34px,5.4vw,58px);line-height:1.28;max-width:820px;margin:0 auto 22px;}
+  .hero h1 span{color:var(--blue);}
+  .hero .sub{max-width:600px;margin:0 auto 36px;font-size:17.5px;}
+  .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
 
-footer{text-align:center;padding:2rem;background:linear-gradient(135deg,#ff6b6b,#f368e0,#54a0ff,#48dbfb);background-size:300% auto;animation:bgShift 5s ease infinite;color:#fff;font-weight:600;font-size:14px;}
-.reveal{opacity:0;transform:translateY(30px);transition:all 0.7s cubic-bezier(0.34,1.56,0.64,1);}
-.reveal.show{opacity:1;transform:translateY(0);}
+  /* ===== محتوای معرفی (PLC + بازی) ===== */
+  .intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+  @media (max-width:760px){.intro-grid{grid-template-columns:1fr;gap:36px;}}
+  .intro-card h3{font-size:21px;margin-bottom:12px;}
+  .intro-card .num{
+    font-family:'Vazirmatn',sans-serif;color:var(--blue);font-size:13px;margin-bottom:10px;display:block;
+  }
 
-@media(max-width:768px){
-  .about-wrap{grid-template-columns:1fr;}
-  .nav-links{gap:0.3rem;}
-  .nav-links a{font-size:11px;padding:4px 7px;}
-  .nav-logo{font-size:14px;}
-  nav{padding:0 0.75rem;height:56px;}
-  .hero{padding:70px 1rem 2rem;}
-  .hero h1{font-size:clamp(1.7rem,7vw,2.3rem);}
-  .hero-subtitle{font-size:0.95rem;}
-  .hero p{font-size:0.85rem;}
-  .btn-main,.btn-sec{padding:10px 20px;font-size:13px;}
-  .sec{padding:3rem 1rem;}
-  .skills-wrap{grid-template-columns:1fr;}
-  .contact-wrap{grid-template-columns:1fr 1fr;}
-  .ct{padding:1.1rem;}
-  .ct-val{font-size:11px;}
-  .lang-btn{font-size:11px;padding:5px 10px;}
-}
+  /* ===== گالری تصاویر ===== */
+  .gallery{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+  }
+  @media (max-width:760px){.gallery{grid-template-columns:1fr;}}
+  .shot{
+    aspect-ratio:16/10;border-radius:var(--radius);
+    background:var(--surface);border:1px solid var(--rail);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-faint);font-family:'Vazirmatn',sans-serif;font-size:12.5px;
+    overflow:hidden;position:relative;
+  }
+  .shot img{width:100%;height:100%;object-fit:cover;}
+  /* برای اضافه کردن عکس واقعی: تگ img رو داخل .shot با src مسیر عکس جایگزین متن placeholder کن */
+
+  /* ===== ویژگی‌ها ===== */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  @media (max-width:900px){.features{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:600px){.features{grid-template-columns:1fr;}}
+  .feature{
+    background:var(--surface);border:1px solid var(--rail);border-radius:var(--radius);
+    padding:26px 22px;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .feature:hover{border-color:var(--blue);transform:translateY(-3px);}
+  .feature-icon{
+    width:38px;height:38px;border-radius:9px;background:var(--blue-soft);
+    display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+  }
+  .feature-icon svg{width:19px;height:19px;stroke:var(--blue);}
+  .feature h3{font-size:16.5px;margin-bottom:8px;}
+  .feature p{font-size:14.5px;margin:0;}
+
+  /* ===== دانلود ===== */
+  .download-box{
+    background:var(--surface);border:1px solid var(--rail);border-radius:20px;
+    padding:48px;text-align:center;
+  }
+  .download-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
+  .dl-btn{
+    display:flex;align-items:center;gap:14px;
+    background:var(--ink);color:#fff;padding:16px 28px;border-radius:12px;
+    text-decoration:none;transition:transform .18s ease, background .18s ease;
+    min-width:210px;
+  }
+  .dl-btn:hover{transform:translateY(-2px);background:#232e2b;}
+  .dl-btn svg{width:26px;height:26px;stroke:#fff;flex-shrink:0;}
+  .dl-btn .lbl{text-align:right;}
+  .dl-btn .lbl small{display:block;color:#b9c2bd;font-size:11.5px;font-family:'Vazirmatn',sans-serif;margin-top:2px;}
+  .download-note{font-size:13px;color:var(--ink-faint);margin-top:22px;}
+
+  /* ===== نظرات ===== */
+  .reviews-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:32px;}
+  .reviews-summary{display:flex;align-items:center;gap:12px;}
+  .stars{color:var(--amber);font-size:18px;letter-spacing:2px;}
+  .review-list{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;}
+  @media (max-width:760px){.review-list{grid-template-columns:1fr;}}
+  .review-card{
+    background:var(--surface);border:1px solid var(--rail);border-radius:var(--radius);
+    padding:20px 22px;
+  }
+  .review-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .review-name{font-weight:700;font-size:14.5px;}
+  .review-stars{color:var(--amber);font-size:13px;letter-spacing:1px;}
+  .review-text{font-size:14.5px;margin:0;color:var(--ink-soft);}
+  .review-empty{
+    grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--ink-faint);
+    font-family:'Vazirmatn',sans-serif;font-size:13.5px;
+  }
+
+  .review-form{
+    background:var(--surface-2);border-radius:var(--radius);padding:28px;
+  }
+  .review-form h3{font-size:17px;margin-bottom:18px;}
+  .form-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+  .form-row .field{flex:1;min-width:180px;display:flex;flex-direction:column;gap:6px;}
+  label{font-size:13px;color:var(--ink-soft);}
+  input[type=text],textarea{
+    font-family:'Vazirmatn',sans-serif;font-size:14.5px;
+    padding:11px 14px;border-radius:8px;border:1px solid var(--rail);
+    background:#fff;color:var(--ink);resize:vertical;
+  }
+  textarea{min-height:88px;}
+  .star-picker{display:flex;gap:6px;font-size:24px;cursor:pointer;user-select:none;}
+  .star-picker span{color:var(--rail);transition:color .12s ease;}
+  .star-picker span.active{color:var(--amber);}
+  .form-status{font-size:13.5px;margin-top:12px;color:var(--blue);min-height:18px;}
+
+  footer{padding:44px 0;text-align:center;color:var(--ink-faint);font-size:13px;font-family:'Vazirmatn',sans-serif;}
+
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease, transform .6s ease;}
+  .reveal.show{opacity:1;transform:none;}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important;}
+  }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-logo">امید حفیظی ⚡</div>
-  <div class="nav-right">
-    <ul class="nav-links">
-      <li><a href="#about" data-fa="درباره من" data-en="About">درباره من</a></li>
-      <li><a href="#skills" data-fa="مهارت‌ها" data-en="Skills">مهارت‌ها</a></li>
-      <li><a href="#contact" data-fa="تماس" data-en="Contact">تماس</a></li>
-    </ul>
-    <button class="lang-btn" onclick="toggleLang()" id="langBtn">🌐 EN</button>
-  </div>
-</nav>
+<div class="rails" aria-hidden="true">
+  <div class="rail-line r"></div>
+  <div class="rail-line l"></div>
+  <div class="rail-pulse" style="left:9px;right:auto;animation-delay:0s;"></div>
+  <div class="rail-pulse" style="animation-delay:2.7s;"></div>
+</div>
 
-<section class="hero" id="home">
-  <div class="particles" id="pts"></div>
-  <div class="hero-content">
-    <div class="hero-badge" data-fa="🎓 دانشگاه صنعتی اصفهان" data-en="🎓 Isfahan University of Technology">🎓 دانشگاه صنعتی اصفهان</div>
-    <h1 data-fa="سلام، من <span class='name'>امید حفیظی</span> هستم" data-en="Hi, I'm <span class='name'>Omid Hafizi</span>">سلام، من <span class="name">امید حفیظی</span> هستم</h1>
-    <div class="hero-subtitle" data-fa="⚙️ متخصص PLC زیمنس" data-en="⚙️ Siemens PLC Specialist">⚙️ متخصص PLC زیمنس</div>
-    <p data-fa="طراحی و پیاده‌سازی سیستم‌های کنترل صنعتی — اتوماسیون هوشمند با بهترین فناوری‌های روز" data-en="Designing & implementing industrial control systems — smart automation with cutting-edge technology">طراحی و پیاده‌سازی سیستم‌های کنترل صنعتی — اتوماسیون هوشمند با بهترین فناوری‌های روز</p>
-    <div class="hero-btns">
-      <button class="btn-main" data-fa="مهارت‌های من 🚀" data-en="My Skills 🚀" onclick="document.getElementById('skills').scrollIntoView({behavior:'smooth'})">مهارت‌های من 🚀</button>
-      <button class="btn-sec" data-fa="تماس بگیرید 📩" data-en="Contact Me 📩" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">تماس بگیرید 📩</button>
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="wrap">
+    <div class="badge"><span class="dot"></span> کارگاه آموزش PLC — نسخه تعاملی</div>
+    <h1>یادگیری <span>PLC</span> با دست‌های خودت، نه فقط با خواندن</h1>
+    <p class="sub">به‌جای حفظ کردن تئوری، یک تابلوی صنعتی واقعی جلوی چشمت روشن و خاموش می‌شود؛ هر قطعه‌ای که می‌چینی، بلافاصله نتیجه‌اش را می‌بینی.</p>
+    <div class="hero-cta">
+      <a href="game/index.html" class="btn btn-primary">بازی کن در مرورگر</a>
+      <a href="#download" class="btn btn-ghost">دانلود نسخه ویندوز</a>
     </div>
   </div>
-  <div class="scroll-arrow" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">↓</div>
 </section>
 
-<div class="sec" id="about">
-  <div class="sec-head reveal">
-    <div class="sec-tag" style="background:#fff0f0;color:#ff6b6b;" data-fa="👤 معرفی" data-en="👤 About">👤 معرفی</div>
-    <h2 class="sec-title" data-fa="درباره <span>من</span>" data-en="About <span>Me</span>">درباره <span>من</span></h2>
-  </div>
-  <div class="about-wrap reveal">
-    <div class="about-me">
-      <h3 data-fa="🙋 چه کسی هستم؟" data-en="🙋 Who am I?">🙋 چه کسی هستم؟</h3>
-      <p data-fa="دانشجوی دانشگاه صنعتی اصفهان با عشق به اتوماسیون و کنترل صنعتی. تخصصم برنامه‌نویسی PLC زیمنس و طراحی سیستم‌های هوشمند صنعتیه." data-en="A student at Isfahan University of Technology passionate about industrial automation and control. I specialize in Siemens PLC programming and designing intelligent industrial systems.">دانشجوی دانشگاه صنعتی اصفهان با عشق به اتوماسیون و کنترل صنعتی. تخصصم برنامه‌نویسی PLC زیمنس و طراحی سیستم‌های هوشمند صنعتیه.</p>
-      <p style="margin-top:1rem;" data-fa="با TIA Portal راه‌حل‌های دقیق و بهینه طراحی می‌کنم که فرآیندهای صنعتی رو متحول می‌کنن." data-en="Using TIA Portal, I design precise and optimized solutions that transform industrial processes.">با TIA Portal راه‌حل‌های دقیق و بهینه طراحی می‌کنم که فرآیندهای صنعتی رو متحول می‌کنن.</p>
-      <div class="tags">
-        <span class="tag" style="background:#fff0f0;color:#ff6b6b;">PLC زیمنس</span>
-        <span class="tag" style="background:#e8f4ff;color:#54a0ff;">TIA Portal</span>
-        <span class="tag" style="background:#f0fff8;color:#00d2d3;" data-fa="اتوماسیون" data-en="Automation">اتوماسیون</span>
-        <span class="tag" style="background:#fff5f0;color:#f368e0;">SCADA</span>
-      </div>
-    </div>
-    <div class="info-card">
-      <div class="info-row">
-        <span class="info-icon">🎓</span>
-        <div>
-          <div class="info-label" data-fa="دانشگاه" data-en="University">دانشگاه</div>
-          <div class="info-val" data-fa="دانشگاه صنعتی اصفهان" data-en="Isfahan Univ. of Technology">دانشگاه صنعتی اصفهان</div>
-        </div>
-      </div>
-      <div class="info-row">
-        <span class="info-icon">⚙️</span>
-        <div>
-          <div class="info-label" data-fa="تخصص" data-en="Specialty">تخصص</div>
-          <div class="info-val" data-fa="برنامه‌نویسی PLC زیمنس" data-en="Siemens PLC Programming">برنامه‌نویسی PLC زیمنس</div>
-        </div>
-      </div>
-      <div class="info-row">
-        <span class="info-icon">📍</span>
-        <div>
-          <div class="info-label" data-fa="مکان" data-en="Location">مکان</div>
-          <div class="info-val" data-fa="یزد، ایران" data-en="Yazd, Iran">یزد، ایران</div>
-        </div>
-      </div>
-      <div class="info-row">
-        <span class="info-icon">💡</span>
-        <div>
-          <div class="info-label" data-fa="علاقه" data-en="Interest">علاقه</div>
-          <div class="info-val" data-fa="اتوماسیون صنعتی" data-en="Industrial Automation">اتوماسیون صنعتی</div>
-        </div>
-      </div>
-      <div class="info-row">
-        <span class="info-icon">🌟</span>
-        <div>
-          <div class="info-label" data-fa="وضعیت" data-en="Status">وضعیت</div>
-          <div class="info-val" style="color:#00b894;" data-fa="آماده همکاری" data-en="Open to Work">آماده همکاری</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<div class="wrap"><div class="rung"></div></div>
 
-<div class="sec" id="skills">
-  <div class="sec-head reveal">
-    <div class="sec-tag" style="background:#f0f5ff;color:#54a0ff;" data-fa="⚡ تخصص" data-en="⚡ Expertise">⚡ تخصص</div>
-    <h2 class="sec-title" data-fa="مهارت‌<span>های</span> من" data-en="My <span>Skills</span>">مهارت‌<span>های</span> من</h2>
-  </div>
-  <div class="skills-wrap">
-    <div class="sk sk-1 reveal">
-      <div class="sk-top"><div class="sk-emoji" style="background:#fff0f0;">⚙️</div><span class="sk-name">PLC زیمنس S7</span></div>
-      <div class="sk-desc" data-fa="برنامه‌نویسی انواع S7-300, S7-400, S7-1200, S7-1500 با مهارت کامل" data-en="Programming S7-300, S7-400, S7-1200, S7-1500 series with full proficiency">برنامه‌نویسی انواع S7-300, S7-400, S7-1200, S7-1500 با مهارت کامل</div>
-      <div class="sk-bar-wrap"><div class="sk-bar" style="width:90%;background:linear-gradient(90deg,#ff6b6b,#ff9f43);"></div></div>
-      <div class="sk-pct" style="color:#ff6b6b;">90%</div>
-    </div>
-    <div class="sk sk-2 reveal">
-      <div class="sk-top"><div class="sk-emoji" style="background:#e8f4ff;">🖥️</div><span class="sk-name">TIA Portal</span></div>
-      <div class="sk-desc" data-fa="طراحی و پیکربندی کامل پروژه در محیط TIA Portal زیمنس" data-en="Full project design and configuration in Siemens TIA Portal environment">طراحی و پیکربندی کامل پروژه در محیط TIA Portal زیمنس</div>
-      <div class="sk-bar-wrap"><div class="sk-bar" style="width:85%;background:linear-gradient(90deg,#54a0ff,#48dbfb);"></div></div>
-      <div class="sk-pct" style="color:#54a0ff;">85%</div>
-    </div>
-    <div class="sk sk-3 reveal">
-      <div class="sk-top"><div class="sk-emoji" style="background:#ffd6f5;">📊</div><span class="sk-name">SCADA / HMI</span></div>
-      <div class="sk-desc" data-fa="طراحی رابط‌های کاربری برای نظارت و کنترل فرآیند صنعتی" data-en="Designing user interfaces for industrial process monitoring and control">طراحی رابط‌های کاربری برای نظارت و کنترل فرآیند صنعتی</div>
-      <div class="sk-bar-wrap"><div class="sk-bar" style="width:78%;background:linear-gradient(90deg,#f368e0,#a29bfe);"></div></div>
-      <div class="sk-pct" style="color:#f368e0;">78%</div>
-    </div>
-    <div class="sk sk-4 reveal">
-      <div class="sk-top"><div class="sk-emoji" style="background:#ccfff5;">🔌</div><span class="sk-name">Ladder / FBD / STL</span></div>
-      <div class="sk-desc" data-fa="تسلط کامل به زبان‌های برنامه‌نویسی استاندارد IEC 61131-3" data-en="Full mastery of IEC 61131-3 standard PLC programming languages">تسلط کامل به زبان‌های برنامه‌نویسی استاندارد IEC 61131-3</div>
-      <div class="sk-bar-wrap"><div class="sk-bar" style="width:88%;background:linear-gradient(90deg,#00d2d3,#55efc4);"></div></div>
-      <div class="sk-pct" style="color:#00d2d3;">88%</div>
-    </div>
-    <div class="sk sk-5 reveal">
-      <div class="sk-top"><div class="sk-emoji" style="background:#fff3cc;">🏭</div><span class="sk-name" data-fa="اتوماسیون صنعتی" data-en="Industrial Automation">اتوماسیون صنعتی</span></div>
-      <div class="sk-desc" data-fa="طراحی سیستم‌های اتوماسیون خطوط تولید و فرآیندهای پیچیده" data-en="Designing automation systems for production lines and complex industrial processes">طراحی سیستم‌های اتوماسیون خطوط تولید و فرآیندهای پیچیده</div>
-      <div class="sk-bar-wrap"><div class="sk-bar" style="width:82%;background:linear-gradient(90deg,#feca57,#f9ca24);"></div></div>
-      <div class="sk-pct" style="color:#f9ca24;">82%</div>
-    </div>
-    <div class="sk sk-6 reveal">
-      <div class="sk-top"><div class="sk-emoji" style="background:#d5ccff;">📡</div><span class="sk-name" data-fa="شبکه‌های صنعتی" data-en="Industrial Networks">شبکه‌های صنعتی</span></div>
-      <div class="sk-desc" data-fa="پیکربندی Profibus, Profinet و ارتباطات پیشرفته بین PLCها" data-en="Configuring Profibus, Profinet and advanced inter-PLC communications">پیکربندی Profibus, Profinet و ارتباطات پیشرفته بین PLCها</div>
-      <div class="sk-bar-wrap"><div class="sk-bar" style="width:72%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);"></div></div>
-      <div class="sk-pct" style="color:#6c5ce7;">72%</div>
+<!-- ===== معرفی PLC و بازی ===== -->
+<section id="about">
+  <div class="wrap">
+    <div class="eyebrow">درباره</div>
+    <div class="intro-grid">
+      <div class="intro-card reveal">
+        <span class="num">01</span>
+        <h3>PLC چیست؟</h3>
+        <p>PLC (کنترل‌کننده منطقی قابل‌برنامه‌ریزی) مغز اکثر خطوط تولید صنعتی است؛ از یک نوار نقاله ساده تا خط مونتاژ کارخانه، تصمیم روشن و خاموش شدن هر موتور و شیر و چراغ را همین دستگاه می‌گیرد. یادگیری آن یکی از پرتقاضاترین مهارت‌های حوزه برق صنعتی و اتوماسیون است.</p>
+      </div>
+      <div class="intro-card reveal">
+        <span class="num">02</span>
+        <h3>این بازی چیست؟</h3>
+        <p>یک محیط شبیه‌سازی مرحله‌به‌مرحله است که در آن، به‌جای خواندن صرف، تجهیزات صنعتی واقعی (کلید، سنسور، شیر، موتور) را در یک دیاگرام لدر می‌چینی و بلافاصله در یک تابلوی زنده می‌بینی چه اتفاقی می‌افتد. هر قطعه یک توضیح «چرا اینجا استفاده می‌شود» هم همراهش دارد، برای همین مفهوم را واقعاً می‌فهمی، نه اینکه فقط حفظ کنی.</p>
+      </div>
     </div>
   </div>
-</div>
+</section>
 
-<div class="sec" id="contact">
-  <div class="sec-head reveal">
-    <div class="sec-tag" style="background:#f0fff8;color:#00b894;" data-fa="📬 ارتباط" data-en="📬 Contact">📬 ارتباط</div>
-    <h2 class="sec-title" data-fa="تماس با <span>من</span>" data-en="Get in <span>Touch</span>">تماس با <span>من</span></h2>
-  </div>
-  <div class="contact-wrap reveal">
-    <a href="mailto:omidhafizi.86@gmail.com" class="ct ct-1">
-      <div class="ct-icon" style="background:#fff0f0;">📧</div>
-      <div class="ct-label" data-fa="ایمیل" data-en="Email">ایمیل</div>
-      <div class="ct-val">omidhafizi.86@gmail.com</div>
-    </a>
-    <a href="https://instagram.com/omidhfz.86" target="_blank" class="ct ct-2">
-      <div class="ct-icon" style="background:#ffd6f5;">📸</div>
-      <div class="ct-label">Instagram</div>
-      <div class="ct-val">@omidhfz.86</div>
-    </a>
-    <a href="https://t.me/omid_hfz" target="_blank" class="ct ct-3">
-      <div class="ct-icon" style="background:#ccfff5;">✈️</div>
-      <div class="ct-label" data-fa="تلگرام" data-en="Telegram">تلگرام</div>
-      <div class="ct-val">@omid_hfz</div>
-    </a>
-    <div class="ct ct-4">
-      <div class="ct-icon" style="background:#fff3cc;">📍</div>
-      <div class="ct-label" data-fa="مکان" data-en="Location">مکان</div>
-      <div class="ct-val" data-fa="یزد، ایران" data-en="Yazd, Iran">یزد، ایران</div>
+<div class="wrap"><div class="rung"></div></div>
+
+<!-- ===== گالری ===== -->
+<section id="gallery">
+  <div class="wrap">
+    <div class="eyebrow">نمای محیط</div>
+    <h2 class="reveal">محیط بازی از نزدیک</h2>
+    <div class="gallery">
+      <div class="shot reveal"><img src="images/shot-ladder.png" alt="محیط ساخت لدر دیاگرام"></div>
+      <div class="shot reveal"><img src="images/shot-sim.png" alt="شبیه‌سازی زنده تعاملی"></div>
+      <div class="shot reveal"><img src="images/shot-map.png" alt="نقشه یادگیری مراحل"></div>
     </div>
   </div>
-</div>
+</section>
+
+<div class="wrap"><div class="rung"></div></div>
+
+<!-- ===== ویژگی‌ها ===== -->
+<section id="features">
+  <div class="wrap">
+    <div class="eyebrow">ویژگی‌ها</div>
+    <h2 class="reveal">چیزی که این بازی را متفاوت می‌کند</h2>
+    <div class="features">
+      <div class="feature reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 12h4l2-6 4 12 2-6h4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>شبیه‌سازی زنده</h3>
+        <p>هر تغییری که در دیاگرام می‌دهی، همان لحظه در یک تابلوی صنعتی متحرک اجرا می‌شود؛ نتیجه را می‌بینی، نه فقط تصور می‌کنی.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5l3 2" stroke-linecap="round"/></svg></div>
+        <h3>توضیح «چرا»</h3>
+        <p>هر قطعه یک راهنمای کوتاه دارد که می‌گوید در دنیای واقعی چرا و کجا استفاده می‌شود، نه فقط این‌که چه می‌کند.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 19V5m0 14h16M4 15l4-4 3 3 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>مسیر مرحله‌به‌مرحله</h3>
+        <p>از روشن کردن یک لامپ ساده شروع می‌کنی و قدم‌به‌قدم به سناریوهای واقعی‌تر صنعتی می‌رسی؛ هر مرحله روی مرحله قبل بنا می‌شود.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h3M8 13h6" stroke-linecap="round"/></svg></div>
+        <h3>تجهیزات واقعی صنعتی</h3>
+        <p>کلید، حسگر، شیر برقی، موتور و رله — همان قطعاتی که سر یک تابلوی واقعی می‌بینی، اینجا هم هستند.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>بازخورد فوری</h3>
+        <p>اگر مسیر منطقی اشتباه باشد، بلافاصله متوجه می‌شوی و راهنمایی می‌گیری که کجای فکرت را اصلاح کنی.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg></div>
+        <h3>رابط کاملاً فارسی</h3>
+        <p>بدون نیاز به دانستن اصطلاحات انگلیسی، تمام مفاهیم به زبان ساده فارسی توضیح داده شده‌اند.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="rung"></div></div>
+
+<!-- ===== دانلود ===== -->
+<section id="download">
+  <div class="wrap">
+    <div class="download-box reveal">
+      <div class="eyebrow" style="justify-content:center;">دریافت</div>
+      <h2>همین حالا شروع کن</h2>
+      <p style="max-width:440px;margin:0 auto;">بدون دانلود از داخل مرورگر بازی کن، یا نسخه دسکتاپ ویندوز را دریافت کن.</p>
+      <div class="download-buttons">
+        <a href="game/index.html" class="dl-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 12l4 4L19 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="lbl">بازی کن در مرورگر<small>بدون نصب</small></span>
+        </a>
+        <a href="https://drive.google.com/uc?export=download&id=1ggojDoB5lu2stibqm_ia1dK6Zqhs_FP6" class="dl-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 5.5L10 4.4v7.1H3V5.5zM11 4.3l10-1.3v8.5H11V4.3zM3 12.5h7v7.1L3 18.5v-6zM11 12.5h10v8.4l-10-1.3v-7.1z"/></svg>
+          <span class="lbl">دانلود برای ویندوز<small>نسخه دسکتاپ (zip)</small></span>
+        </a>
+        <a class="dl-btn" style="opacity:.45;pointer-events:none;cursor:default;" aria-disabled="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 19.5h4" stroke-linecap="round"/></svg>
+          <span class="lbl">دانلود برای اندروید<small>به‌زودی</small></span>
+        </a>
+      </div>
+      <div class="download-note">فایل ویندوز به‌صورت zip است — بعد از دانلود اکسترکت کن و PLC-Trainer.exe را اجرا کن</div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="rung"></div></div>
+
+<!-- ===== نظرات ===== -->
+<section id="reviews">
+  <div class="wrap">
+    <div class="reviews-head">
+      <div>
+        <div class="eyebrow">نظرات</div>
+        <h2 style="margin-bottom:0;">کاربران چه می‌گویند</h2>
+      </div>
+      <div class="reviews-summary mono" id="reviews-summary"></div>
+    </div>
+
+    <div class="review-list" id="review-list">
+      <div class="review-empty">در حال بارگذاری نظرات…</div>
+    </div>
+
+    <div class="review-form reveal">
+      <h3>نظرت را ثبت کن</h3>
+      <div class="form-row">
+        <div class="field">
+          <label for="rv-name">اسم (یا نام مستعار)</label>
+          <input type="text" id="rv-name" maxlength="40" placeholder="مثلاً: امیر">
+        </div>
+        <div class="field">
+          <label>امتیاز</label>
+          <div class="star-picker" id="star-picker">
+            <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rv-text">نظرت</label>
+        <textarea id="rv-text" maxlength="400" placeholder="تجربه‌ت با بازی چطور بود؟"></textarea>
+      </div>
+      <button class="btn btn-primary" id="rv-submit" style="margin-top:14px;">ثبت نظر</button>
+      <div class="form-status" id="rv-status"></div>
+    </div>
+  </div>
+</section>
 
 <footer>
-  <p id="footer-text" data-fa="ساخته شده با ❤️ توسط امید حفیظی | دانشگاه صنعتی اصفهان 🎓" data-en="Made with ❤️ by Omid Hafizi | Isfahan University of Technology 🎓">ساخته شده با ❤️ توسط امید حفیظی | دانشگاه صنعتی اصفهان 🎓</p>
+  کارگاه PLC — ساخته‌شده برای علاقه‌مندان اتوماسیون صنعتی
 </footer>
 
-<script>
-// Particles
-const pts = document.getElementById('pts');
-const colors = ['#ff6b6b','#feca57','#48dbfb','#ff9ff3','#54a0ff','#55efc4','#a29bfe'];
-for(let i=0;i<30;i++){
-  const d=document.createElement('div');
-  const s=Math.random()*12+4;
-  d.className='p';
-  d.style.cssText=`width:${s}px;height:${s}px;background:${colors[Math.floor(Math.random()*colors.length)]};left:${Math.random()*100}%;animation-duration:${Math.random()*10+8}s;animation-delay:${Math.random()*8}s;opacity:0.7;`;
-  pts.appendChild(d);
-}
+<!-- ===================================================================
+     اتصال Firebase برای ذخیره واقعی نظرات (قابل دیدن برای همه بازدیدکننده‌ها)
+     مراحل:
+     ۱) در Firebase Console یک پروژه بساز و Firestore Database را فعال کن
+     ۲) firebaseConfig زیر را با مقدار واقعی پروژه‌ات جایگزین کن
+     ۳) در Firestore Rules دسترسی خواندن/نوشتن روی کالکشن reviews را باز کن، مثلا:
+        match /reviews/{id} { allow read: if true; allow create: if
+          request.resource.data.name is string &&
+          request.resource.data.text is string &&
+          request.resource.data.rating is int; }
+==================================================================== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Reveal
-const reveals=document.querySelectorAll('.reveal');
-const obs=new IntersectionObserver((entries)=>{
-  entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('show'),i*100);obs.unobserve(e.target);}});
-},{threshold:0.1});
-reveals.forEach(r=>obs.observe(r));
+  // ⬇⬇⬇ این بخش را با کلیدهای واقعی پروژه Firebase خودت جایگزین کن ⬇⬇⬇
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  // ⬆⬆⬆ ------------------------------------------------------ ⬆⬆⬆
 
-// Language toggle
-let isEN = false;
-function toggleLang(){
-  isEN = !isEN;
-  const body = document.body;
-  const btn = document.getElementById('langBtn');
-
-  if(isEN){
-    body.classList.add('en');
-    body.setAttribute('dir','ltr');
-    body.setAttribute('lang','en');
-    btn.textContent = '🌐 FA';
-    document.querySelector('.nav-logo').textContent = 'Omid Hafizi ⚡';
-  } else {
-    body.classList.remove('en');
-    body.setAttribute('dir','rtl');
-    body.setAttribute('lang','fa');
-    btn.textContent = '🌐 EN';
-    document.querySelector('.nav-logo').textContent = 'امید حفیظی ⚡';
+  let db = null;
+  try{
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+  }catch(e){
+    console.warn("Firebase هنوز تنظیم نشده:", e);
   }
 
-  // Switch all data-fa / data-en elements
-  document.querySelectorAll('[data-fa][data-en]').forEach(el => {
-    const val = isEN ? el.getAttribute('data-en') : el.getAttribute('data-fa');
-    el.innerHTML = val;
+  const listEl = document.getElementById('review-list');
+  const summaryEl = document.getElementById('reviews-summary');
+  const statusEl = document.getElementById('rv-status');
+
+  function renderStars(n){
+    return '★★★★★☆☆☆☆☆'.slice(5-n,10-n);
+  }
+
+  function renderReviews(items){
+    if(!items.length){
+      listEl.innerHTML = '<div class="review-empty">هنوز نظری ثبت نشده — اولین نفری باش که نظرش را می‌نویسد.</div>';
+      summaryEl.textContent = '';
+      return;
+    }
+    const avg = (items.reduce((s,r)=>s+r.rating,0)/items.length).toFixed(1);
+    summaryEl.innerHTML = `<span class="stars">${renderStars(Math.round(avg))}</span> ${avg} از ۵ · ${items.length} نظر`;
+    listEl.innerHTML = items.map(r => `
+      <div class="review-card">
+        <div class="review-top">
+          <span class="review-name">${escapeHtml(r.name)}</span>
+          <span class="review-stars">${renderStars(r.rating)}</span>
+        </div>
+        <p class="review-text">${escapeHtml(r.text)}</p>
+      </div>
+    `).join('');
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  async function loadReviews(){
+    if(!db){
+      listEl.innerHTML = '<div class="review-empty">اتصال نظرات هنوز تنظیم نشده است.</div>';
+      return;
+    }
+    try{
+      const q = query(collection(db,'reviews'), orderBy('createdAt','desc'));
+      const snap = await getDocs(q);
+      const items = [];
+      snap.forEach(doc => items.push(doc.data()));
+      renderReviews(items);
+    }catch(e){
+      console.error(e);
+      listEl.innerHTML = '<div class="review-empty">خطا در بارگذاری نظرات.</div>';
+    }
+  }
+
+  // ستاره‌ها
+  let rating = 0;
+  const starEls = document.querySelectorAll('#star-picker span');
+  starEls.forEach(s => s.addEventListener('click', () => {
+    rating = parseInt(s.dataset.v,10);
+    starEls.forEach(x => x.classList.toggle('active', parseInt(x.dataset.v,10) <= rating));
+  }));
+
+  document.getElementById('rv-submit').addEventListener('click', async () => {
+    const name = document.getElementById('rv-name').value.trim();
+    const text = document.getElementById('rv-text').value.trim();
+    if(!name || !text || !rating){
+      statusEl.textContent = 'لطفاً اسم، امتیاز و متن نظر را کامل کن.';
+      return;
+    }
+    if(!db){
+      statusEl.textContent = 'ذخیره نظرات هنوز فعال نشده است.';
+      return;
+    }
+    statusEl.textContent = 'در حال ثبت…';
+    try{
+      await addDoc(collection(db,'reviews'), { name, text, rating, createdAt: serverTimestamp() });
+      document.getElementById('rv-name').value = '';
+      document.getElementById('rv-text').value = '';
+      rating = 0;
+      starEls.forEach(x => x.classList.remove('active'));
+      statusEl.textContent = 'نظرت ثبت شد، ممنون!';
+      loadReviews();
+    }catch(e){
+      console.error(e);
+      statusEl.textContent = 'ثبت نظر با خطا مواجه شد.';
+    }
   });
-}
+
+  loadReviews();
+
+  // انیمیشن reveal هنگام اسکرول
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target);} });
+  }, {threshold:.15});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 </script>
 </body>
 </html>
