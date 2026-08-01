@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آموزشگاه PLC | از صفر تا صنعت</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== صفحه ورود ===== -->
+<section id="screen-home" class="screen active">
+  <div class="home-wrap">
+    <div class="home-badge">آموزشگاه کنترل صنعتی</div>
+    <h1 class="home-title">PLC را با <span>دست‌هایت</span> یاد بگیر</h1>
+    <p class="home-sub">از روشن کردن یک لامپ ساده تا برنامه‌نویسی خط تولید واقعی. مرحله به مرحله، با شبیه‌سازی زنده و توضیح «چرا؟» برای هر قطعه.</p>
+    <button id="btn-start-journey" class="btn-primary">شروع یادگیری</button>
+    <div class="mini-ladder" aria-hidden="true">
+      <div class="ml-rail"></div>
+      <div class="ml-rungs">
+        <span class="ml-rung" style="animation-delay:0s"></span>
+        <span class="ml-rung" style="animation-delay:.3s"></span>
+        <span class="ml-rung" style="animation-delay:.6s"></span>
+      </div>
+      <div class="ml-rail"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== نقشه مراحل ===== -->
+<section id="screen-map" class="screen">
+  <header class="topbar">
+    <button class="icon-btn" id="btn-map-home" title="بازگشت به خانه">⌂</button>
+    <div class="topbar-title">نقشه یادگیری</div>
+    <div class="topbar-spacer"></div>
+  </header>
+  <div class="map-wrap" id="map-list"></div>
+</section>
+
+<!-- ===== محیط اصلی بازی (کارگاه) ===== -->
+<section id="screen-workshop" class="screen">
+  <header class="topbar">
+    <button class="icon-btn" id="btn-workshop-back" title="بازگشت به نقشه">→</button>
+    <div class="topbar-title" id="workshop-title">درس</div>
+    <div class="stage-progress">
+      <div class="stage-progress-fill" id="stage-progress-fill"></div>
+    </div>
+    <button class="icon-btn" id="btn-restart-stage" title="شروع دوباره این مرحله">⟲</button>
+    <button class="icon-btn" id="btn-toggle-sound" title="روشن/خاموش کردن صدا">🔊</button>
+  </header>
+
+  <div class="workshop-grid">
+    <!-- پنل آموزش/راهنما -->
+    <aside class="panel panel-coach" id="panel-coach">
+      <div class="coach-tag" id="coach-tag">مفهوم</div>
+      <div class="coach-body" id="coach-body"></div>
+      <div class="coach-actions" id="coach-actions"></div>
+    </aside>
+
+    <!-- تجهیزات صنعتی -->
+    <aside class="panel panel-equipment">
+      <div class="panel-head">تجهیزات صنعتی</div>
+      <div class="equip-list" id="equip-list"></div>
+      <div class="panel-head panel-head-2">دستورات لدر</div>
+      <div class="equip-list" id="instr-list"></div>
+    </aside>
+
+    <!-- محیط لدر دیاگرام -->
+    <main class="panel panel-ladder">
+      <div class="panel-head">
+        Ladder Diagram
+        <div class="ladder-controls">
+          <button id="btn-run" class="chip chip-run">▶ اجرا</button>
+          <button id="btn-stop" class="chip chip-stop">■ توقف</button>
+          <button id="btn-check" class="chip chip-check">✓ بررسی پاسخ</button>
+        </div>
+      </div>
+      <div class="ladder-scroll">
+        <div class="ladder-canvas" id="ladder-canvas"></div>
+      </div>
+    </main>
+
+    <!-- شبیه‌سازی زنده کارخانه -->
+    <aside class="panel panel-factory">
+      <div class="panel-head">شبیه‌سازی زنده</div>
+      <div class="factory-stage" id="factory-stage"></div>
+      <div class="io-monitor" id="io-monitor"></div>
+    </aside>
+  </div>
+
+  <!-- بازخورد کف صفحه -->
+  <div class="feedback-bar" id="feedback-bar">
+    <div class="feedback-icon" id="feedback-icon">💡</div>
+    <div class="feedback-text" id="feedback-text"></div>
+    <button class="feedback-close" id="feedback-close">✕</button>
+  </div>
+</section>
+
+<!-- ===== مودال «چرا؟» ===== -->
+<div class="modal-overlay" id="why-overlay">
+  <div class="modal-card">
+    <button class="modal-close" id="why-close">✕</button>
+    <div class="modal-icon" id="why-icon">⚙</div>
+    <h3 class="modal-title" id="why-title"></h3>
+    <div class="modal-section">
+      <div class="modal-label">عملکرد چیست؟</div>
+      <p id="why-func"></p>
+    </div>
+    <div class="modal-section">
+      <div class="modal-label">کاربرد صنعتی</div>
+      <p id="why-use"></p>
+    </div>
+    <div class="modal-section">
+      <div class="modal-label">مثال واقعی</div>
+      <p id="why-example"></p>
+    </div>
+    <div class="modal-section modal-tip">
+      <div class="modal-label">نکته مهم</div>
+      <p id="why-tip"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== toast تکمیل مرحله ===== -->
+<div class="stage-complete-overlay" id="complete-overlay">
+  <div class="complete-card">
+    <div class="complete-star">★</div>
+    <h2>آفرین! مرحله را کامل کردی</h2>
+    <p id="complete-text"></p>
+    <div class="complete-actions">
+      <button class="btn-ghost" id="btn-complete-map">نقشه مراحل</button>
+      <button class="btn-primary" id="btn-complete-next">مرحله بعد</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/audio/sound.js"></script>
+<script src="js/data/lessons.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui/whyPanel.js"></script>
+<script src="js/ui/feedback.js"></script>
+<script src="js/simulation/engine.js"></script>
+<script src="js/simulation/factory.js"></script>
+<script src="js/ladder/ladderEditor.js"></script>
+<script src="js/ui/navigation.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
