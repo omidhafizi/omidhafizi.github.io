@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بازی آموزش PLC چیست و چرا بهتر از دوره‌های معمولی است؟</title>
+<meta name="description" content="معرفی بازی آموزش PLC و شبیه‌ساز آنلاین PLC؛ چرا یادگیری لدر دیاگرام با بازی، سریع‌تر و عمیق‌تر از دوره‌های تئوری‌محور جواب می‌دهد.">
+<link rel="canonical" href="https://omidhfz.ir/blog/amoozesh-plc-ba-bazi.html">
+
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://omidhfz.ir/blog/amoozesh-plc-ba-bazi.html">
+<meta property="og:title" content="بازی آموزش PLC چیست و چرا بهتر از دوره‌های معمولی است؟">
+<meta property="og:description" content="معرفی بازی آموزش PLC و شبیه‌ساز آنلاین PLC؛ چرا یادگیری لدر دیاگرام با بازی، سریع‌تر و عمیق‌تر از دوره‌های تئوری‌محور جواب می‌دهد.">
+<meta property="og:image" content="https://omidhfz.ir/og-image.png">
+<meta property="og:locale" content="fa_IR">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="بازی آموزش PLC چیست و چرا بهتر از دوره‌های معمولی است؟">
+<meta name="twitter:description" content="معرفی بازی آموزش PLC و شبیه‌ساز آنلاین PLC؛ چرا یادگیری لدر دیاگرام با بازی، سریع‌تر و عمیق‌تر از دوره‌های تئوری‌محور جواب می‌دهد.">
+<meta name="twitter:image" content="https://omidhfz.ir/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#F2F4F2;
+    --surface:#FFFFFF;
+    --surface-2:#EAEDEA;
+    --ink:#151B1A;
+    --ink-soft:#4E5A57;
+    --ink-faint:#8A948F;
+    --rail:#CBD3CD;
+    --amber:#EBA53B;
+    --amber-soft:#FBEAD0;
+    --blue:#2D6E8E;
+    --blue-soft:#DCEAF0;
+    --green:#3C9463;
+    --green-soft:#DFF0E6;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Vazirmatn',sans-serif;
+    background:var(--bg);color:var(--ink);
+    line-height:1.9;
+  }
+  a{color:var(--blue);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  header{
+    padding:22px 24px;display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid var(--rail);background:var(--surface);
+  }
+  header .logo{font-weight:700;font-size:16px;}
+  .wrap{max-width:760px;margin:0 auto;padding:48px 20px 80px;}
+  .eyebrow{color:var(--blue);font-size:13px;font-weight:600;display:block;margin-bottom:12px;}
+  h1{font-size:30px;line-height:1.5;margin-bottom:18px;}
+  .lede{color:var(--ink-soft);font-size:17px;margin-bottom:36px;}
+  article h2{font-size:21px;margin:38px 0 14px;}
+  article h3{font-size:17px;margin:24px 0 10px;}
+  article p{color:var(--ink-soft);font-size:16px;margin-bottom:16px;}
+  article ul{margin:0 0 16px;padding-inline-start:22px;color:var(--ink-soft);font-size:16px;}
+  article li{margin-bottom:8px;}
+  .compare{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;
+  }
+  @media (max-width:600px){.compare{grid-template-columns:1fr;}}
+  .compare .card{background:var(--surface);border:1px solid var(--rail);border-radius:var(--radius);padding:18px 20px;}
+  .compare .card h4{font-size:14px;margin-bottom:10px;}
+  .compare .card.bad h4{color:#B5502F;}
+  .compare .card.good h4{color:var(--green);}
+  .compare .card p{font-size:14px;margin:0;}
+  .cta-box{
+    margin:44px 0;padding:28px;background:var(--surface);border:1px solid var(--rail);
+    border-radius:var(--radius);text-align:center;
+  }
+  .cta-box p{margin-bottom:18px;}
+  .cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn{
+    display:inline-block;padding:12px 26px;border-radius:10px;font-weight:600;font-size:14.5px;
+  }
+  .btn-primary{background:var(--ink);color:#fff;}
+  .btn-ghost{background:var(--surface-2);color:var(--ink);}
+  footer{text-align:center;padding:32px;color:var(--ink-faint);font-size:13px;}
+  footer a{color:var(--ink-faint);}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "بازی آموزش PLC چیست و چرا بهتر از دوره‌های معمولی جواب می‌دهد؟",
+      "description": "معرفی بازی آموزش PLC و شبیه‌ساز آنلاین PLC؛ چرا یادگیری لدر دیاگرام با بازی، سریع‌تر و عمیق‌تر از دوره‌های تئوری‌محور جواب می‌دهد.",
+      "image": "https://omidhfz.ir/og-image.png",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://omidhfz.ir/blog/amoozesh-plc-ba-bazi.html"
+      },
+      "url": "https://omidhfz.ir/blog/amoozesh-plc-ba-bazi.html",
+      "inLanguage": "fa-IR",
+      "author": { "@id": "https://omidhfz.ir/#organization" },
+      "publisher": { "@id": "https://omidhfz.ir/#organization" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "کارگاه PLC", "item": "https://omidhfz.ir/" },
+        { "@type": "ListItem", "position": 2, "name": "بازی آموزش PLC چیست؟", "item": "https://omidhfz.ir/blog/amoozesh-plc-ba-bazi.html" }
+      ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://omidhfz.ir/#organization",
+      "name": "کارگاه PLC",
+      "url": "https://omidhfz.ir/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://omidhfz.ir/apple-touch-icon.png",
+        "width": 180,
+        "height": 180
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header>
+  <span class="logo">کارگاه PLC</span>
+  <a href="/">بازگشت به صفحه اصلی</a>
+</header>
+
+<div class="wrap">
+  <span class="eyebrow">آموزش PLC</span>
+  <h1>بازی آموزش PLC چیست و چرا بهتر از دوره‌های معمولی جواب می‌دهد؟</h1>
+  <p class="lede">اگر اسم «بازی آموزش PLC» یا «شبیه‌ساز آنلاین PLC» به گوشت خورده و نمی‌دونی دقیقاً چیه و با دوره‌های ویدیویی معمولی چه فرقی داره، این مطلب برای توئه.</p>
+
+  <article>
+    <h2>چرا یادگیری PLC از روی تئوری معمولاً جواب نمی‌دهد؟</h2>
+    <p>اکثر دوره‌های آموزش PLC — چه ویدیویی، چه کلاس حضوری — با معرفی نظری کنتاکت‌ها، کویل‌ها و دستورات شروع می‌شن. مشکل اینجاست که ذهن آدم چیزی رو که نمی‌بینه واقعاً اجرا می‌شه، به همون سرعت فراموش می‌کنه. خیلی از هنرجوها بعد از یک دوره‌ی کامل، هنوز موقع دیدن یک تابلوی صنعتی واقعی گیج می‌شن، چون هیچ‌وقت با دست خودشون یک مدار رو نساختن و ندیدن که واقعاً چطور روشن و خاموش می‌شه.</p>
+
+    <h3>راه‌حل: یادگیری با شبیه‌سازی زنده</h3>
+    <p>یک بازی آموزش PLC، به‌جای این‌که فقط مفهوم کنتاکت NO یا NC رو توضیح بده، یک تابلوی صنعتی شبیه‌سازی‌شده جلوی چشمت می‌ذاره — با موتور، سنسور، شیر برقی، چراغ — و همون لحظه که یک قطعه رو تو دیاگرام لدر می‌چینی، نتیجه‌اش رو زنده می‌بینی. این یعنی به‌جای حفظ کردن، واقعاً درک می‌کنی چرا هر قطعه اونجاست.</p>
+
+    <h2>مقایسه: دوره‌ی سنتی در برابر بازی شبیه‌سازی PLC</h2>
+    <div class="compare">
+      <div class="card bad">
+        <h4>دوره‌ی سنتی</h4>
+        <p>تماشای ویدیو یا نشستن سر کلاس، بدون امکان امتحان کردن فوری آنچه یاد گرفتی. بازخورد اشتباهت را معمولاً هفته‌ها بعد، سر امتحان یا پروژه، می‌فهمی.</p>
+      </div>
+      <div class="card good">
+        <h4>بازی شبیه‌سازی PLC</h4>
+        <p>همان لحظه که یک رانگ اشتباه می‌بندی، تابلو نتیجه‌ی غلط را نشان می‌دهد و راهنمایی می‌گیری که دقیقاً کجای منطقت اشتباه بوده — بازخورد فوری، نه هفته‌ها بعد.</p>
+      </div>
+    </div>
+
+    <h2>یک شبیه‌ساز PLC آنلاین خوب باید چه ویژگی‌هایی داشته باشد؟</h2>
+    <ul>
+      <li>تجهیزات واقعی صنعتی (کلید، سنسور، شیر برقی، موتور، رله) نه فقط نمادهای انتزاعی</li>
+      <li>توضیح «چرا» برای هر قطعه، نه فقط «چیست»</li>
+      <li>مسیر مرحله‌به‌مرحله — از یک لامپ ساده تا یک خط تولید کامل</li>
+      <li>بازخورد فوری وقتی منطق اشتباه است</li>
+      <li>رابط کاربری کاملاً به زبان مادری، بدون نیاز به دانستن اصطلاحات انگلیسی</li>
+    </ul>
+    <p>این دقیقاً همون چیزیه که تو کارگاه PLC ساختیمش — یک بازی رایگان، کاملاً فارسی، که از پایه‌ای‌ترین مفاهیم (روشن کردن یک لامپ با دکمه‌ی Start) شروع می‌شه و قدم‌به‌قدم به سناریوهای واقعی صنعتی مثل پارکینگ هوشمند و خط تولید کامل می‌رسه.</p>
+  </article>
+
+  <div class="cta-box">
+    <p>می‌خوای خودت امتحانش کنی؟ همین الان، بدون نصب، از داخل مرورگر شروع کن.</p>
+    <div class="cta-actions">
+      <a href="/game/index.html" class="btn btn-primary">بازی کن در مرورگر</a>
+      <a href="/#download" class="btn btn-ghost">دانلود نسخه ویندوز</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="/">کارگاه PLC</a> — ساخته‌شده برای علاقه‌مندان اتوماسیون صنعتی
+</footer>
+
+</body>
+</html>
